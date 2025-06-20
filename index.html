@@ -1,858 +1,851 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2821
-\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
-{\colortbl;\red255\green255\blue255;}
-{\*\expandedcolortbl;;}
-\margl1440\margr1440\vieww29200\viewh18380\viewkind0
-\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Uncertainty Scoring Assessment - Real-Time</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-\f0\fs24 \cf0 <!DOCTYPE html>\
-<html lang="en">\
-<head>\
-    <meta charset="UTF-8">\
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">\
-    <title>Uncertainty Scoring Assessment - Real-Time</title>\
-    <style>\
-        * \{\
-            margin: 0;\
-            padding: 0;\
-            box-sizing: border-box;\
-        \}\
-\
-        body \{\
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);\
-            min-height: 100vh;\
-            padding: 20px;\
-        \}\
-\
-        .container \{\
-            max-width: 1000px;\
-            margin: 0 auto;\
-            background: rgba(255, 255, 255, 0.95);\
-            border-radius: 20px;\
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);\
-            overflow: hidden;\
-            backdrop-filter: blur(10px);\
-        \}\
-\
-        .header \{\
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);\
-            color: white;\
-            padding: 30px;\
-            text-align: center;\
-            position: relative;\
-        \}\
-\
-        .header h1 \{\
-            font-size: 2.5rem;\
-            margin-bottom: 10px;\
-            font-weight: 700;\
-        \}\
-\
-        .header p \{\
-            font-size: 1.1rem;\
-            opacity: 0.9;\
-        \}\
-\
-        .live-indicator \{\
-            position: absolute;\
-            top: 20px;\
-            right: 20px;\
-            background: rgba(16, 185, 129, 0.2);\
-            color: #10b981;\
-            padding: 8px 16px;\
-            border-radius: 20px;\
-            font-size: 0.9rem;\
-            font-weight: 600;\
-            display: flex;\
-            align-items: center;\
-            gap: 8px;\
-        \}\
-\
-        .live-dot \{\
-            width: 8px;\
-            height: 8px;\
-            background: #10b981;\
-            border-radius: 50%;\
-            animation: pulse 2s infinite;\
-        \}\
-\
-        @keyframes pulse \{\
-            0% \{ opacity: 1; \}\
-            50% \{ opacity: 0.5; \}\
-            100% \{ opacity: 1; \}\
-        \}\
-\
-        .content \{\
-            padding: 40px;\
-        \}\
-\
-        .instructions \{\
-            background: #f8fafc;\
-            border-left: 4px solid #4f46e5;\
-            padding: 20px;\
-            margin-bottom: 30px;\
-            border-radius: 8px;\
-        \}\
-\
-        .instructions h3 \{\
-            color: #1e293b;\
-            margin-bottom: 10px;\
-        \}\
-\
-        .instructions ul \{\
-            color: #64748b;\
-            padding-left: 20px;\
-        \}\
-\
-        .instructions li \{\
-            margin-bottom: 5px;\
-        \}\
-\
-        .connection-status \{\
-            background: #f0f9ff;\
-            border: 1px solid #0ea5e9;\
-            color: #0369a1;\
-            padding: 15px;\
-            margin-bottom: 20px;\
-            border-radius: 8px;\
-            text-align: center;\
-            font-weight: 500;\
-        \}\
-\
-        .connection-status.connected \{\
-            background: #f0fdf4;\
-            border-color: #10b981;\
-            color: #059669;\
-        \}\
-\
-        .connection-status.error \{\
-            background: #fef2f2;\
-            border-color: #ef4444;\
-            color: #dc2626;\
-        \}\
-\
-        .scoring-table \{\
-            width: 100%;\
-            border-collapse: collapse;\
-            margin-bottom: 30px;\
-            background: white;\
-            border-radius: 12px;\
-            overflow: hidden;\
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);\
-        \}\
-\
-        .scoring-table th \{\
-            background: linear-gradient(135deg, #1e293b, #334155);\
-            color: white;\
-            padding: 18px;\
-            text-align: left;\
-            font-weight: 600;\
-            font-size: 1rem;\
-        \}\
-\
-        .scoring-table td \{\
-            padding: 15px 18px;\
-            border-bottom: 1px solid #e2e8f0;\
-        \}\
-\
-        .scoring-table tr:hover \{\
-            background: #f1f5f9;\
-        \}\
-\
-        .scoring-table tr:last-child td \{\
-            border-bottom: none;\
-        \}\
-\
-        .uncertainty-name \{\
-            font-weight: 600;\
-            color: #1e293b;\
-        \}\
-\
-        .score-input \{\
-            width: 80px;\
-            padding: 8px 12px;\
-            border: 2px solid #e2e8f0;\
-            border-radius: 8px;\
-            text-align: center;\
-            font-size: 1rem;\
-            transition: all 0.3s ease;\
-        \}\
-\
-        .score-input:focus \{\
-            outline: none;\
-            border-color: #4f46e5;\
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);\
-        \}\
-\
-        .score-input.error \{\
-            border-color: #ef4444;\
-            background: #fef2f2;\
-        \}\
-\
-        .submit-section \{\
-            text-align: center;\
-            margin-bottom: 30px;\
-        \}\
-\
-        .submit-btn \{\
-            background: linear-gradient(135deg, #10b981, #059669);\
-            color: white;\
-            padding: 15px 40px;\
-            border: none;\
-            border-radius: 12px;\
-            font-size: 1.1rem;\
-            font-weight: 600;\
-            cursor: pointer;\
-            transition: all 0.3s ease;\
-            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);\
-        \}\
-\
-        .submit-btn:hover \{\
-            transform: translateY(-2px);\
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);\
-        \}\
-\
-        .submit-btn:disabled \{\
-            background: #94a3b8;\
-            cursor: not-allowed;\
-            transform: none;\
-            box-shadow: none;\
-        \}\
-\
-        .results-section \{\
-            background: #f8fafc;\
-            border-radius: 12px;\
-            padding: 30px;\
-            margin-top: 30px;\
-        \}\
-\
-        .results-section h3 \{\
-            color: #1e293b;\
-            margin-bottom: 20px;\
-            font-size: 1.5rem;\
-            display: flex;\
-            align-items: center;\
-            gap: 10px;\
-        \}\
-\
-        .auto-update-badge \{\
-            background: #10b981;\
-            color: white;\
-            padding: 4px 12px;\
-            border-radius: 12px;\
-            font-size: 0.8rem;\
-            font-weight: 500;\
-        \}\
-\
-        .results-table \{\
-            width: 100%;\
-            border-collapse: collapse;\
-            background: white;\
-            border-radius: 8px;\
-            overflow: hidden;\
-        \}\
-\
-        .results-table th \{\
-            background: #1e293b;\
-            color: white;\
-            padding: 15px;\
-            text-align: left;\
-        \}\
-\
-        .results-table td \{\
-            padding: 12px 15px;\
-            border-bottom: 1px solid #e2e8f0;\
-        \}\
-\
-        .results-table tr:last-child td \{\
-            border-bottom: none;\
-        \}\
-\
-        .average-score \{\
-            font-weight: 600;\
-            color: #4f46e5;\
-        \}\
-\
-        .user-count \{\
-            text-align: center;\
-            margin-top: 15px;\
-            color: #64748b;\
-            font-style: italic;\
-        \}\
-\
-        .error-message \{\
-            color: #ef4444;\
-            font-size: 0.9rem;\
-            margin-top: 10px;\
-            text-align: center;\
-        \}\
-\
-        .success-message \{\
-            color: #10b981;\
-            font-size: 1rem;\
-            margin-top: 10px;\
-            text-align: center;\
-            font-weight: 500;\
-        \}\
-\
-        .plot-section \{\
-            text-align: center;\
-            margin-top: 25px;\
-        \}\
-\
-        .create-plot-btn \{\
-            background: linear-gradient(135deg, #f59e0b, #d97706);\
-            color: white;\
-            padding: 15px 40px;\
-            border: none;\
-            border-radius: 12px;\
-            font-size: 1.1rem;\
-            font-weight: 600;\
-            cursor: pointer;\
-            transition: all 0.3s ease;\
-            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);\
-        \}\
-\
-        .create-plot-btn:hover \{\
-            transform: translateY(-2px);\
-            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);\
-        \}\
-\
-        .plot-container \{\
-            margin-top: 30px;\
-            background: white;\
-            border-radius: 12px;\
-            padding: 30px;\
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);\
-        \}\
-\
-        .plot-container h3 \{\
-            color: #1e293b;\
-            margin-bottom: 20px;\
-            text-align: center;\
-            display: flex;\
-            align-items: center;\
-            justify-content: center;\
-            gap: 10px;\
-        \}\
-\
-        .plot-canvas \{\
-            max-width: 100%;\
-            height: auto;\
-            border: 1px solid #e2e8f0;\
-            border-radius: 8px;\
-            display: block;\
-            margin: 0 auto;\
-        \}\
-\
-        .plot-legend \{\
-            margin-top: 15px;\
-            text-align: center;\
-            color: #64748b;\
-            font-size: 0.9rem;\
-        \}\
-\
-        .plot-legend p \{\
-            margin-bottom: 5px;\
-        \}\
-\
-        @media (max-width: 768px) \{\
-            .container \{\
-                margin: 10px;\
-                border-radius: 15px;\
-            \}\
-            \
-            .content \{\
-                padding: 20px;\
-            \}\
-            \
-            .header h1 \{\
-                font-size: 2rem;\
-            \}\
-            \
-            .live-indicator \{\
-                position: static;\
-                margin-top: 15px;\
-                justify-content: center;\
-            \}\
-            \
-            .scoring-table, .results-table \{\
-                font-size: 0.9rem;\
-            \}\
-            \
-            .scoring-table th, .scoring-table td \{\
-                padding: 12px 10px;\
-            \}\
-        \}\
-    </style>\
-</head>\
-<body>\
-    <div class="container">\
-        <div class="header">\
-            <div class="live-indicator">\
-                <div class="live-dot"></div>\
-                Real-Time Updates\
-            </div>\
-            <h1>Uncertainty Assessment</h1>\
-            <p>Evaluate uncertainties and their impact on strategic decisions</p>\
-        </div>\
-        \
-        <div class="content">\
-            <div class="connection-status" id="connectionStatus">\
-                Connecting to real-time database...\
-            </div>\
-\
-            <div class="instructions">\
-                <h3>Scoring Guidelines</h3>\
-                <ul>\
-                    <li><strong>Extent of Uncertainty:</strong> 1 = Not very uncertain, 5 = We have no idea</li>\
-                    <li><strong>Impact on Decision:</strong> 1 = Low impact, 5 = High impact (could make or break the strategy)</li>\
-                    <li>Please enter scores between 1-5 for each uncertainty</li>\
-                    <li><strong>Real-time:</strong> Results update automatically as other users submit scores</li>\
-                </ul>\
-            </div>\
-\
-            <form id="uncertaintyForm">\
-                <table class="scoring-table">\
-                    <thead>\
-                        <tr>\
-                            <th>Uncertainty</th>\
-                            <th>Extent of Uncertainty (1-5)</th>\
-                            <th>Impact on Decision (1-5)</th>\
-                        </tr>\
-                    </thead>\
-                    <tbody id="uncertaintyTableBody">\
-                        <tr>\
-                            <td class="uncertainty-name">Uncertainty A</td>\
-                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="A" data-type="extent" required></td>\
-                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="A" data-type="impact" required></td>\
-                        </tr>\
-                        <tr>\
-                            <td class="uncertainty-name">Uncertainty B</td>\
-                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="B" data-type="extent" required></td>\
-                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="B" data-type="impact" required></td>\
-                        </tr>\
-                        <tr>\
-                            <td class="uncertainty-name">Uncertainty C</td>\
-                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="C" data-type="extent" required></td>\
-                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="C" data-type="impact" required></td>\
-                        </tr>\
-                        <tr>\
-                            <td class="uncertainty-name">Uncertainty D</td>\
-                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="D" data-type="extent" required></td>\
-                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="D" data-type="impact" required></td>\
-                        </tr>\
-                        <tr>\
-                            <td class="uncertainty-name">Uncertainty E</td>\
-                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="E" data-type="extent" required></td>\
-                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="E" data-type="impact" required></td>\
-                        </tr>\
-                    </tbody>\
-                </table>\
-\
-                <div class="submit-section">\
-                    <button type="submit" class="submit-btn" id="submitBtn">Submit Scores</button>\
-                    <div id="errorMessage" class="error-message"></div>\
-                    <div id="successMessage" class="success-message"></div>\
-                </div>\
-            </form>\
-\
-            <div class="results-section" id="resultsSection" style="display: none;">\
-                <h3>\
-                    Live Averages Across All Users\
-                    <span class="auto-update-badge">Auto-Updates</span>\
-                </h3>\
-                <table class="results-table">\
-                    <thead>\
-                        <tr>\
-                            <th>Uncertainty</th>\
-                            <th>Avg. Extent of Uncertainty</th>\
-                            <th>Avg. Impact on Decision</th>\
-                        </tr>\
-                    </thead>\
-                    <tbody id="resultsTableBody">\
-                    </tbody>\
-                </table>\
-                <div class="user-count" id="userCount"></div>\
-                \
-                <div class="plot-section">\
-                    <button id="createPlotBtn" class="create-plot-btn">\
-                        Create Live Plot\
-                    </button>\
-                </div>\
-            </div>\
-\
-            <div class="plot-container" id="plotContainer" style="display: none;">\
-                <h3>\
-                    Uncertainty Risk Matrix\
-                    <span class="auto-update-badge">Live Updates</span>\
-                </h3>\
-                <canvas id="uncertaintyPlot" class="plot-canvas" width="800" height="600"></canvas>\
-                <div class="plot-legend">\
-                    <p><strong>X-axis:</strong> Extent of Uncertainty (1 = Not very uncertain, 5 = No idea)</p>\
-                    <p><strong>Y-axis:</strong> Impact on Decision (1 = Low impact, 5 = High impact)</p>\
-                    <p><em>Chart updates automatically as new submissions arrive</em></p>\
-                </div>\
-            </div>\
-        </div>\
-    </div>\
-\
-    <!-- Firebase SDK -->\
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>\
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>\
-\
-    <script>\
-        // Firebase Configuration - REPLACE WITH YOUR CONFIG FROM FIREBASE CONSOLE\
-        const firebaseConfig = \{\
-              apiKey: "AIzaSyAW8HSef8Psr7adH9KK5HTBBPk7M3J9_es",
-              authDomain: "uncertainty-ranking-app.firebaseapp.com",
-              databaseURL: "https://uncertainty-ranking-app-default-rtdb.firebaseio.com",
-              projectId: "uncertainty-ranking-app",
-              storageBucket: "uncertainty-ranking-app.firebasestorage.app",
-              messagingSenderId: "772132099086",
-              appId: "1:772132099086:web:7c1ab4acc5b309ad4ed85f"
-        \};\
-\
-        // Initialize Firebase\
-        firebase.initializeApp(firebaseConfig);\
-        const database = firebase.database();\
-\
-        // Real-time database class\
-        class RealTimeDB \{\
-            constructor() \{\
-                this.isConnected = false;\
-                this.submissions = [];\
-                this.listeners = [];\
-                this.plotVisible = false;\
-                this.connectToFirebase();\
-            \}\
-\
-            connectToFirebase() \{\
-                const connectionStatus = document.getElementById('connectionStatus');\
-                \
-                try \{\
-                    const connectedRef = database.ref('.info/connected');\
-                    connectedRef.on('value', (snapshot) => \{\
-                        if (snapshot.val() === true) \{\
-                            connectionStatus.textContent = 'Connected to real-time database \uc0\u10003 ';\
-                            connectionStatus.className = 'connection-status connected';\
-                            this.isConnected = true;\
-                        \} else \{\
-                            connectionStatus.textContent = 'Disconnected from database';\
-                            connectionStatus.className = 'connection-status error';\
-                            this.isConnected = false;\
-                        \}\
-                    \});\
-\
-                    database.ref('submissions').on('value', (snapshot) => \{\
-                        const data = snapshot.val();\
-                        this.submissions = data ? Object.values(data) : [];\
-                        this.notifyListeners();\
-                    \});\
-\
-                \} catch (error) \{\
-                    connectionStatus.textContent = 'Error connecting to database. Check your Firebase config.';\
-                    connectionStatus.className = 'connection-status error';\
-                    console.error('Firebase connection error:', error);\
-                \}\
-            \}\
-\
-            addSubmission(data) \{\
-                if (!this.isConnected) \{\
-                    alert('Not connected to database. Please check your connection.');\
-                    return false;\
-                \}\
-\
-                const submission = \{\
-                    id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),\
-                    timestamp: Date.now(),\
-                    data: data\
-                \};\
-\
-                database.ref('submissions').push(submission)\
-                    .then(() => \{\
-                        console.log('Submission saved successfully');\
-                    \})\
-                    .catch((error) => \{\
-                        console.error('Error saving submission:', error);\
-                        alert('Error saving your submission. Please try again.');\
-                    \});\
-\
-                return true;\
-            \}\
-\
-            getAverages() \{\
-                if (this.submissions.length === 0) return \{\};\
-                \
-                const uncertainties = ['A', 'B', 'C', 'D', 'E'];\
-                const averages = \{\};\
-                \
-                uncertainties.forEach(uncertainty => \{\
-                    const extentScores = this.submissions.map(sub => sub.data[uncertainty].extent);\
-                    const impactScores = this.submissions.map(sub => sub.data[uncertainty].impact);\
-                    \
-                    averages[uncertainty] = \{\
-                        extent: (extentScores.reduce((a, b) => a + b, 0) / extentScores.length).toFixed(1),\
-                        impact: (impactScores.reduce((a, b) => a + b, 0) / impactScores.length).toFixed(1)\
-                    \};\
-                \});\
-                \
-                return averages;\
-            \}\
-\
-            getUserCount() \{\
-                return this.submissions.length;\
-            \}\
-\
-            onDataChange(callback) \{\
-                this.listeners.push(callback);\
-            \}\
-\
-            notifyListeners() \{\
-                this.listeners.forEach(callback => callback());\
-            \}\
-        \}\
-\
-        const rtdb = new RealTimeDB();\
-\
-        function validateInput(input) \{\
-            const value = parseInt(input.value);\
-            const isValid = value >= 1 && value <= 5;\
-            \
-            if (!isValid) \{\
-                input.classList.add('error');\
-            \} else \{\
-                input.classList.remove('error');\
-            \}\
-            \
-            return isValid;\
-        \}\
-\
-        function validateAllInputs() \{\
-            const inputs = document.querySelectorAll('.score-input');\
-            let allValid = true;\
-            \
-            inputs.forEach(input => \{\
-                if (!validateInput(input)) \{\
-                    allValid = false;\
-                \}\
-            \});\
-            \
-            return allValid;\
-        \}\
-\
-        function displayResults() \{\
-            const averages = rtdb.getAverages();\
-            const resultsTableBody = document.getElementById('resultsTableBody');\
-            const userCount = document.getElementById('userCount');\
-            const resultsSection = document.getElementById('resultsSection');\
-            \
-            if (Object.keys(averages).length === 0) \{\
-                resultsSection.style.display = 'none';\
-                return;\
-            \}\
-            \
-            resultsTableBody.innerHTML = '';\
-            \
-            Object.keys(averages).forEach(uncertainty => \{\
-                const row = document.createElement('tr');\
-                row.innerHTML = `\
-                    <td class="uncertainty-name">Uncertainty $\{uncertainty\}</td>\
-                    <td class="average-score">$\{averages[uncertainty].extent\}</td>\
-                    <td class="average-score">$\{averages[uncertainty].impact\}</td>\
-                `;\
-                resultsTableBody.appendChild(row);\
-            \});\
-            \
-            const totalUsers = rtdb.getUserCount();\
-            userCount.textContent = `Based on $\{totalUsers\} user submission$\{totalUsers !== 1 ? 's' : ''\}`;\
-            resultsSection.style.display = 'block';\
-            \
-            if (rtdb.plotVisible) \{\
-                createPlot();\
-            \}\
-        \}\
-\
-        function createPlot() \{\
-            const averages = rtdb.getAverages();\
-            \
-            if (Object.keys(averages).length === 0) \{\
-                alert('No data available to create plot. Submit some scores first!');\
-                return;\
-            \}\
-            \
-            const canvas = document.getElementById('uncertaintyPlot');\
-            const ctx = canvas.getContext('2d');\
-            const plotContainer = document.getElementById('plotContainer');\
-            \
-            canvas.width = 800;\
-            canvas.height = 600;\
-            ctx.clearRect(0, 0, canvas.width, canvas.height);\
-            \
-            const margin = 80;\
-            const plotWidth = canvas.width - 2 * margin;\
-            const plotHeight = canvas.height - 2 * margin;\
-            \
-            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);\
-            gradient.addColorStop(0, '#f8fafc');\
-            gradient.addColorStop(1, '#f1f5f9');\
-            ctx.fillStyle = gradient;\
-            ctx.fillRect(0, 0, canvas.width, canvas.height);\
-            \
-            ctx.fillStyle = 'white';\
-            ctx.fillRect(margin, margin, plotWidth, plotHeight);\
-            \
-            ctx.strokeStyle = '#e2e8f0';\
-            ctx.lineWidth = 1;\
-            \
-            for (let i = 1; i <= 5; i++) \{\
-                const x = margin + (i - 1) * (plotWidth / 4);\
-                ctx.beginPath();\
-                ctx.moveTo(x, margin);\
-                ctx.lineTo(x, margin + plotHeight);\
-                ctx.stroke();\
-            \}\
-            \
-            for (let i = 1; i <= 5; i++) \{\
-                const y = margin + plotHeight - (i - 1) * (plotHeight / 4);\
-                ctx.beginPath();\
-                ctx.moveTo(margin, y);\
-                ctx.lineTo(margin + plotWidth, y);\
-                ctx.stroke();\
-            \}\
-            \
-            ctx.strokeStyle = '#1e293b';\
-            ctx.lineWidth = 2;\
-            \
-            ctx.beginPath();\
-            ctx.moveTo(margin, margin + plotHeight);\
-            ctx.lineTo(margin + plotWidth, margin + plotHeight);\
-            ctx.stroke();\
-            \
-            ctx.beginPath();\
-            ctx.moveTo(margin, margin);\
-            ctx.lineTo(margin, margin + plotHeight);\
-            ctx.stroke();\
-            \
-            ctx.fillStyle = '#1e293b';\
-            ctx.font = 'bold 14px Arial';\
-            ctx.textAlign = 'center';\
-            \
-            ctx.fillText('Extent of Uncertainty', canvas.width / 2, canvas.height - 20);\
-            \
-            ctx.save();\
-            ctx.translate(20, canvas.height / 2);\
-            ctx.rotate(-Math.PI / 2);\
-            ctx.fillText('Impact on Decision', 0, 0);\
-            ctx.restore();\
-            \
-            ctx.font = '12px Arial';\
-            ctx.fillStyle = '#64748b';\
-            \
-            for (let i = 1; i <= 5; i++) \{\
-                const x = margin + (i - 1) * (plotWidth / 4);\
-                ctx.fillText(i.toString(), x, margin + plotHeight + 20);\
-            \}\
-            \
-            ctx.textAlign = 'right';\
-            for (let i = 1; i <= 5; i++) \{\
-                const y = margin + plotHeight - (i - 1) * (plotHeight / 4);\
-                ctx.fillText(i.toString(), margin - 10, y + 4);\
-            \}\
-            \
-            const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6'];\
-            const uncertainties = ['A', 'B', 'C', 'D', 'E'];\
-            \
-            uncertainties.forEach((uncertainty, index) => \{\
-                const extentScore = parseFloat(averages[uncertainty].extent);\
-                const impactScore = parseFloat(averages[uncertainty].impact);\
-                \
-                const x = margin + (extentScore - 1) * (plotWidth / 4);\
-                const y = margin + plotHeight - (impactScore - 1) * (plotHeight / 4);\
-                \
-                const bubbleRadius = 25;\
-                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';\
-                ctx.beginPath();\
-                ctx.arc(x + 2, y + 2, bubbleRadius, 0, 2 * Math.PI);\
-                ctx.fill();\
-                \
-                ctx.fillStyle = colors[index];\
-                ctx.beginPath();\
-                ctx.arc(x, y, bubbleRadius, 0, 2 * Math.PI);\
-                ctx.fill();\
-                \
-                ctx.strokeStyle = 'white';\
-                ctx.lineWidth = 3;\
-                ctx.stroke();\
-                \
-                ctx.fillStyle = 'white';\
-                ctx.font = 'bold 14px Arial';\
-                ctx.textAlign = 'center';\
-                ctx.fillText(uncertainty, x, y + 5);\
-                \
-                ctx.fillStyle = '#1e293b';\
-                ctx.font = '10px Arial';\
-                ctx.fillText(`($\{extentScore\}, $\{impactScore\})`, x, y + bubbleRadius + 15);\
-            \});\
-            \
-            ctx.fillStyle = '#64748b';\
-            ctx.font = 'italic 12px Arial';\
-            ctx.textAlign = 'center';\
-            \
-            ctx.fillText('Monitor', margin + plotWidth * 0.25, margin + 20);\
-            ctx.fillText('Manage Closely', margin + plotWidth * 0.75, margin + 20);\
-            ctx.fillText('Accept', margin + plotWidth * 0.25, margin + plotHeight - 10);\
-            ctx.fillText('Track', margin + plotWidth * 0.75, margin + plotHeight - 10);\
-            \
-            rtdb.plotVisible = true;\
-            plotContainer.style.display = 'block';\
-            plotContainer.scrollIntoView(\{ behavior: 'smooth', block: 'start' \});\
-        \}\
-\
-        document.querySelectorAll('.score-input').forEach(input => \{\
-            input.addEventListener('input', function() \{\
-                validateInput(this);\
-                document.getElementById('errorMessage').textContent = '';\
-            \});\
-        \});\
-\
-        document.getElementById('uncertaintyForm').addEventListener('submit', function(e) \{\
-            e.preventDefault();\
-            \
-            const errorMessage = document.getElementById('errorMessage');\
-            const successMessage = document.getElementById('successMessage');\
-            \
-            errorMessage.textContent = '';\
-            successMessage.textContent = '';\
-            \
-            if (!validateAllInputs()) \{\
-                errorMessage.textContent = 'Please enter valid scores between 1-5 for all uncertainties.';\
-                return;\
-            \}\
-            \
-            const submission = \{\};\
-            const uncertainties = ['A', 'B', 'C', 'D', 'E'];\
-            \
-            uncertainties.forEach(uncertainty => \{\
-                const extentInput = document.querySelector(`[data-uncertainty="$\{uncertainty\}"][data-type="extent"]`);\
-                const impactInput = document.querySelector(`[data-uncertainty="$\{uncertainty\}"][data-type="impact"]`);\
-                \
-                submission[uncertainty] = \{\
-                    extent: parseInt(extentInput.value),\
-                    impact: parseInt(impactInput.value)\
-                \};\
-            \});\
-            \
-            if (rtdb.addSubmission(submission)) \{\
-                successMessage.textContent = 'Scores submitted successfully! See updated averages below.';\
-                document.getElementById('resultsSection').scrollIntoView(\{ behavior: 'smooth', block: 'start' \});\
-            \}\
-        \});\
-\
-        document.getElementById('createPlotBtn').addEventListener('click', createPlot);\
-\
-        rtdb.onDataChange(displayResults);\
-    </script>\
-</body>\
-</html>}
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .header {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .live-indicator {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .live-dot {
+            width: 8px;
+            height: 8px;
+            background: #10b981;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .instructions {
+            background: #f8fafc;
+            border-left: 4px solid #4f46e5;
+            padding: 20px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .instructions h3 {
+            color: #1e293b;
+            margin-bottom: 10px;
+        }
+
+        .instructions ul {
+            color: #64748b;
+            padding-left: 20px;
+        }
+
+        .instructions li {
+            margin-bottom: 5px;
+        }
+
+        .connection-status {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            color: #0369a1;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .connection-status.connected {
+            background: #f0fdf4;
+            border-color: #10b981;
+            color: #059669;
+        }
+
+        .connection-status.error {
+            background: #fef2f2;
+            border-color: #ef4444;
+            color: #dc2626;
+        }
+
+        .scoring-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 30px;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        .scoring-table th {
+            background: linear-gradient(135deg, #1e293b, #334155);
+            color: white;
+            padding: 18px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        .scoring-table td {
+            padding: 15px 18px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .scoring-table tr:hover {
+            background: #f1f5f9;
+        }
+
+        .scoring-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .uncertainty-name {
+            font-weight: 600;
+            color: #1e293b;
+        }
+
+        .score-input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .score-input:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+        }
+
+        .score-input.error {
+            border-color: #ef4444;
+            background: #fef2f2;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #94a3b8;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results-section {
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 30px;
+            margin-top: 30px;
+        }
+
+        .results-section h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .auto-update-badge {
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .results-table th {
+            background: #1e293b;
+            color: white;
+            padding: 15px;
+            text-align: left;
+        }
+
+        .results-table td {
+            padding: 12px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .results-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .average-score {
+            font-weight: 600;
+            color: #4f46e5;
+        }
+
+        .user-count {
+            text-align: center;
+            margin-top: 15px;
+            color: #64748b;
+            font-style: italic;
+        }
+
+        .error-message {
+            color: #ef4444;
+            font-size: 0.9rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        .success-message {
+            color: #10b981;
+            font-size: 1rem;
+            margin-top: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .plot-section {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .create-plot-btn {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 15px 40px;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .create-plot-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .plot-container {
+            margin-top: 30px;
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+        }
+
+        .plot-container h3 {
+            color: #1e293b;
+            margin-bottom: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .plot-canvas {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .plot-legend {
+            margin-top: 15px;
+            text-align: center;
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+
+        .plot-legend p {
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 15px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .live-indicator {
+                position: static;
+                margin-top: 15px;
+                justify-content: center;
+            }
+            
+            .scoring-table, .results-table {
+                font-size: 0.9rem;
+            }
+            
+            .scoring-table th, .scoring-table td {
+                padding: 12px 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="live-indicator">
+                <div class="live-dot"></div>
+                Real-Time Updates
+            </div>
+            <h1>Uncertainty Assessment</h1>
+            <p>Evaluate uncertainties and their impact on strategic decisions</p>
+        </div>
+        
+        <div class="content">
+            <div class="connection-status" id="connectionStatus">
+                Connecting to real-time database...
+            </div>
+
+            <div class="instructions">
+                <h3>Scoring Guidelines</h3>
+                <ul>
+                    <li><strong>Extent of Uncertainty:</strong> 1 = Not very uncertain, 5 = We have no idea</li>
+                    <li><strong>Impact on Decision:</strong> 1 = Low impact, 5 = High impact (could make or break the strategy)</li>
+                    <li>Please enter scores between 1-5 for each uncertainty</li>
+                    <li><strong>Real-time:</strong> Results update automatically as other users submit scores</li>
+                </ul>
+            </div>
+
+            <form id="uncertaintyForm">
+                <table class="scoring-table">
+                    <thead>
+                        <tr>
+                            <th>Uncertainty</th>
+                            <th>Extent of Uncertainty (1-5)</th>
+                            <th>Impact on Decision (1-5)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="uncertaintyTableBody">
+                        <tr>
+                            <td class="uncertainty-name">Uncertainty A</td>
+                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="A" data-type="extent" required></td>
+                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="A" data-type="impact" required></td>
+                        </tr>
+                        <tr>
+                            <td class="uncertainty-name">Uncertainty B</td>
+                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="B" data-type="extent" required></td>
+                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="B" data-type="impact" required></td>
+                        </tr>
+                        <tr>
+                            <td class="uncertainty-name">Uncertainty C</td>
+                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="C" data-type="extent" required></td>
+                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="C" data-type="impact" required></td>
+                        </tr>
+                        <tr>
+                            <td class="uncertainty-name">Uncertainty D</td>
+                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="D" data-type="extent" required></td>
+                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="D" data-type="impact" required></td>
+                        </tr>
+                        <tr>
+                            <td class="uncertainty-name">Uncertainty E</td>
+                            <td><input type="number" class="score-input extent-input" min="1" max="5" data-uncertainty="E" data-type="extent" required></td>
+                            <td><input type="number" class="score-input impact-input" min="1" max="5" data-uncertainty="E" data-type="impact" required></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="submit-section">
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit Scores</button>
+                    <div id="errorMessage" class="error-message"></div>
+                    <div id="successMessage" class="success-message"></div>
+                </div>
+            </form>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h3>
+                    Live Averages Across All Users
+                    <span class="auto-update-badge">Auto-Updates</span>
+                </h3>
+                <table class="results-table">
+                    <thead>
+                        <tr>
+                            <th>Uncertainty</th>
+                            <th>Avg. Extent of Uncertainty</th>
+                            <th>Avg. Impact on Decision</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultsTableBody">
+                    </tbody>
+                </table>
+                <div class="user-count" id="userCount"></div>
+                
+                <div class="plot-section">
+                    <button id="createPlotBtn" class="create-plot-btn">
+                        Create Live Plot
+                    </button>
+                </div>
+            </div>
+
+            <div class="plot-container" id="plotContainer" style="display: none;">
+                <h3>
+                    Uncertainty Risk Matrix
+                    <span class="auto-update-badge">Live Updates</span>
+                </h3>
+                <canvas id="uncertaintyPlot" class="plot-canvas" width="800" height="600"></canvas>
+                <div class="plot-legend">
+                    <p><strong>X-axis:</strong> Extent of Uncertainty (1 = Not very uncertain, 5 = No idea)</p>
+                    <p><strong>Y-axis:</strong> Impact on Decision (1 = Low impact, 5 = High impact)</p>
+                    <p><em>Chart updates automatically as new submissions arrive</em></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
+
+    <script>
+        // Firebase Configuration with your actual settings
+        const firebaseConfig = {
+            apiKey: "AIzaSyAW8HSef8Psr7adH9KK5HTBBPk7M3J9_es",
+            authDomain: "uncertainty-ranking-app.firebaseapp.com",
+            databaseURL: "https://uncertainty-ranking-app-default-rtdb.firebaseio.com",
+            projectId: "uncertainty-ranking-app",
+            storageBucket: "uncertainty-ranking-app.firebasestorage.app",
+            messagingSenderId: "772132099086",
+            appId: "1:772132099086:web:7c1ab4acc5b309ad4ed85f"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Real-time database class
+        class RealTimeDB {
+            constructor() {
+                this.isConnected = false;
+                this.submissions = [];
+                this.listeners = [];
+                this.plotVisible = false;
+                this.connectToFirebase();
+            }
+
+            connectToFirebase() {
+                const connectionStatus = document.getElementById('connectionStatus');
+                
+                try {
+                    const connectedRef = database.ref('.info/connected');
+                    connectedRef.on('value', (snapshot) => {
+                        if (snapshot.val() === true) {
+                            connectionStatus.textContent = 'Connected to real-time database ✓';
+                            connectionStatus.className = 'connection-status connected';
+                            this.isConnected = true;
+                        } else {
+                            connectionStatus.textContent = 'Disconnected from database';
+                            connectionStatus.className = 'connection-status error';
+                            this.isConnected = false;
+                        }
+                    });
+
+                    database.ref('submissions').on('value', (snapshot) => {
+                        const data = snapshot.val();
+                        this.submissions = data ? Object.values(data) : [];
+                        this.notifyListeners();
+                    });
+
+                } catch (error) {
+                    connectionStatus.textContent = 'Error connecting to database. Check your Firebase config.';
+                    connectionStatus.className = 'connection-status error';
+                    console.error('Firebase connection error:', error);
+                }
+            }
+
+            addSubmission(data) {
+                if (!this.isConnected) {
+                    alert('Not connected to database. Please check your connection.');
+                    return false;
+                }
+
+                const submission = {
+                    id: 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9),
+                    timestamp: Date.now(),
+                    data: data
+                };
+
+                database.ref('submissions').push(submission)
+                    .then(() => {
+                        console.log('Submission saved successfully');
+                    })
+                    .catch((error) => {
+                        console.error('Error saving submission:', error);
+                        alert('Error saving your submission. Please try again.');
+                    });
+
+                return true;
+            }
+
+            getAverages() {
+                if (this.submissions.length === 0) return {};
+                
+                const uncertainties = ['A', 'B', 'C', 'D', 'E'];
+                const averages = {};
+                
+                uncertainties.forEach(uncertainty => {
+                    const extentScores = this.submissions.map(sub => sub.data[uncertainty].extent);
+                    const impactScores = this.submissions.map(sub => sub.data[uncertainty].impact);
+                    
+                    averages[uncertainty] = {
+                        extent: (extentScores.reduce((a, b) => a + b, 0) / extentScores.length).toFixed(1),
+                        impact: (impactScores.reduce((a, b) => a + b, 0) / impactScores.length).toFixed(1)
+                    };
+                });
+                
+                return averages;
+            }
+
+            getUserCount() {
+                return this.submissions.length;
+            }
+
+            onDataChange(callback) {
+                this.listeners.push(callback);
+            }
+
+            notifyListeners() {
+                this.listeners.forEach(callback => callback());
+            }
+        }
+
+        const rtdb = new RealTimeDB();
+
+        function validateInput(input) {
+            const value = parseInt(input.value);
+            const isValid = value >= 1 && value <= 5;
+            
+            if (!isValid) {
+                input.classList.add('error');
+            } else {
+                input.classList.remove('error');
+            }
+            
+            return isValid;
+        }
+
+        function validateAllInputs() {
+            const inputs = document.querySelectorAll('.score-input');
+            let allValid = true;
+            
+            inputs.forEach(input => {
+                if (!validateInput(input)) {
+                    allValid = false;
+                }
+            });
+            
+            return allValid;
+        }
+
+        function displayResults() {
+            const averages = rtdb.getAverages();
+            const resultsTableBody = document.getElementById('resultsTableBody');
+            const userCount = document.getElementById('userCount');
+            const resultsSection = document.getElementById('resultsSection');
+            
+            if (Object.keys(averages).length === 0) {
+                resultsSection.style.display = 'none';
+                return;
+            }
+            
+            resultsTableBody.innerHTML = '';
+            
+            Object.keys(averages).forEach(uncertainty => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td class="uncertainty-name">Uncertainty ${uncertainty}</td>
+                    <td class="average-score">${averages[uncertainty].extent}</td>
+                    <td class="average-score">${averages[uncertainty].impact}</td>
+                `;
+                resultsTableBody.appendChild(row);
+            });
+            
+            const totalUsers = rtdb.getUserCount();
+            userCount.textContent = `Based on ${totalUsers} user submission${totalUsers !== 1 ? 's' : ''}`;
+            resultsSection.style.display = 'block';
+            
+            if (rtdb.plotVisible) {
+                createPlot();
+            }
+        }
+
+        function createPlot() {
+            const averages = rtdb.getAverages();
+            
+            if (Object.keys(averages).length === 0) {
+                alert('No data available to create plot. Submit some scores first!');
+                return;
+            }
+            
+            const canvas = document.getElementById('uncertaintyPlot');
+            const ctx = canvas.getContext('2d');
+            const plotContainer = document.getElementById('plotContainer');
+            
+            canvas.width = 800;
+            canvas.height = 600;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            const margin = 80;
+            const plotWidth = canvas.width - 2 * margin;
+            const plotHeight = canvas.height - 2 * margin;
+            
+            const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+            gradient.addColorStop(0, '#f8fafc');
+            gradient.addColorStop(1, '#f1f5f9');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = 'white';
+            ctx.fillRect(margin, margin, plotWidth, plotHeight);
+            
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            
+            for (let i = 1; i <= 5; i++) {
+                const x = margin + (i - 1) * (plotWidth / 4);
+                ctx.beginPath();
+                ctx.moveTo(x, margin);
+                ctx.lineTo(x, margin + plotHeight);
+                ctx.stroke();
+            }
+            
+            for (let i = 1; i <= 5; i++) {
+                const y = margin + plotHeight - (i - 1) * (plotHeight / 4);
+                ctx.beginPath();
+                ctx.moveTo(margin, y);
+                ctx.lineTo(margin + plotWidth, y);
+                ctx.stroke();
+            }
+            
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2;
+            
+            ctx.beginPath();
+            ctx.moveTo(margin, margin + plotHeight);
+            ctx.lineTo(margin + plotWidth, margin + plotHeight);
+            ctx.stroke();
+            
+            ctx.beginPath();
+            ctx.moveTo(margin, margin);
+            ctx.lineTo(margin, margin + plotHeight);
+            ctx.stroke();
+            
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 14px Arial';
+            ctx.textAlign = 'center';
+            
+            ctx.fillText('Extent of Uncertainty', canvas.width / 2, canvas.height - 20);
+            
+            ctx.save();
+            ctx.translate(20, canvas.height / 2);
+            ctx.rotate(-Math.PI / 2);
+            ctx.fillText('Impact on Decision', 0, 0);
+            ctx.restore();
+            
+            ctx.font = '12px Arial';
+            ctx.fillStyle = '#64748b';
+            
+            for (let i = 1; i <= 5; i++) {
+                const x = margin + (i - 1) * (plotWidth / 4);
+                ctx.fillText(i.toString(), x, margin + plotHeight + 20);
+            }
+            
+            ctx.textAlign = 'right';
+            for (let i = 1; i <= 5; i++) {
+                const y = margin + plotHeight - (i - 1) * (plotHeight / 4);
+                ctx.fillText(i.toString(), margin - 10, y + 4);
+            }
+            
+            const colors = ['#ef4444', '#f97316', '#eab308', '#22c55e', '#3b82f6'];
+            const uncertainties = ['A', 'B', 'C', 'D', 'E'];
+            
+            uncertainties.forEach((uncertainty, index) => {
+                const extentScore = parseFloat(averages[uncertainty].extent);
+                const impactScore = parseFloat(averages[uncertainty].impact);
+                
+                const x = margin + (extentScore - 1) * (plotWidth / 4);
+                const y = margin + plotHeight - (impactScore - 1) * (plotHeight / 4);
+                
+                const bubbleRadius = 25;
+                ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+                ctx.beginPath();
+                ctx.arc(x + 2, y + 2, bubbleRadius, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                ctx.fillStyle = colors[index];
+                ctx.beginPath();
+                ctx.arc(x, y, bubbleRadius, 0, 2 * Math.PI);
+                ctx.fill();
+                
+                ctx.strokeStyle = 'white';
+                ctx.lineWidth = 3;
+                ctx.stroke();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(uncertainty, x, y + 5);
+                
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '10px Arial';
+                ctx.fillText(`(${extentScore}, ${impactScore})`, x, y + bubbleRadius + 15);
+            });
+            
+            ctx.fillStyle = '#64748b';
+            ctx.font = 'italic 12px Arial';
+            ctx.textAlign = 'center';
+            
+            ctx.fillText('Monitor', margin + plotWidth * 0.25, margin + 20);
+            ctx.fillText('Manage Closely', margin + plotWidth * 0.75, margin + 20);
+            ctx.fillText('Accept', margin + plotWidth * 0.25, margin + plotHeight - 10);
+            ctx.fillText('Track', margin + plotWidth * 0.75, margin + plotHeight - 10);
+            
+            rtdb.plotVisible = true;
+            plotContainer.style.display = 'block';
+            plotContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        document.querySelectorAll('.score-input').forEach(input => {
+            input.addEventListener('input', function() {
+                validateInput(this);
+                document.getElementById('errorMessage').textContent = '';
+            });
+        });
+
+        document.getElementById('uncertaintyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const errorMessage = document.getElementById('errorMessage');
+            const successMessage = document.getElementById('successMessage');
+            
+            errorMessage.textContent = '';
+            successMessage.textContent = '';
+            
+            if (!validateAllInputs()) {
+                errorMessage.textContent = 'Please enter valid scores between 1-5 for all uncertainties.';
+                return;
+            }
+            
+            const submission = {};
+            const uncertainties = ['A', 'B', 'C', 'D', 'E'];
+            
+            uncertainties.forEach(uncertainty => {
+                const extentInput = document.querySelector(`[data-uncertainty="${uncertainty}"][data-type="extent"]`);
+                const impactInput = document.querySelector(`[data-uncertainty="${uncertainty}"][data-type="impact"]`);
+                
+                submission[uncertainty] = {
+                    extent: parseInt(extentInput.value),
+                    impact: parseInt(impactInput.value)
+                };
+            });
+            
+            if (rtdb.addSubmission(submission)) {
+                successMessage.textContent = 'Scores submitted successfully! See updated averages below.';
+                document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        });
+
+        document.getElementById('createPlotBtn').addEventListener('click', createPlot);
+
+        rtdb.onDataChange(displayResults);
+    </script>
+</body>
+</html>
