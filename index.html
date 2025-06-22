@@ -467,8 +467,8 @@ px;
                 </h3>
                 <canvas id="uncertaintyPlot" class="plot-canvas" width="800" height="600"></canvas>
                 <div class="plot-legend">
-                    <p><strong>X-axis:</strong> Extent of Uncertainty (1 = Not very uncertain, 5 = No idea)</p>
-                    <p><strong>Y-axis:</strong> Impact on Decision (1 = Low impact, 5 = High impact)</p>
+                    <p><strong>X-axis:</strong> Extent of Uncertainty (1 = High certainty, 5 = No idea)</p>
+                    <p><strong>Y-axis:</strong> Impact on Strategic success (1 = Low impact, 5 = High impact)</p>
                     <p><em>Chart updates automatically as new submissions arrive</em></p>
                 </div>
             </div>
@@ -721,7 +721,7 @@ px;
             ctx.save();
             ctx.translate(20, canvas.height / 2);
             ctx.rotate(-Math.PI / 2);
-            ctx.fillText('Impact on Decision', 0, 0);
+            ctx.fillText('Impact on Strategic success', 0, 0);
             ctx.restore();
             
             ctx.font = '12px Arial';
@@ -777,8 +777,8 @@ px;
             ctx.font = 'italic 12px Arial';
             ctx.textAlign = 'center';
             
-            ctx.fillText('Monitor', margin + plotWidth * 0.25, margin + 20);
-            ctx.fillText('Manage Closely', margin + plotWidth * 0.75, margin + 20);
+            ctx.fillText('Optimize', margin + plotWidth * 0.25, margin + 20);
+            ctx.fillText('Prepare to manage', margin + plotWidth * 0.75, margin + 20);
             ctx.fillText('Accept', margin + plotWidth * 0.25, margin + plotHeight - 10);
             ctx.fillText('Track', margin + plotWidth * 0.75, margin + plotHeight - 10);
             
